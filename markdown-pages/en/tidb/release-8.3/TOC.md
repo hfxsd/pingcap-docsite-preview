@@ -9,7 +9,7 @@
   - [MySQL Compatibility](/mysql-compatibility.md)
   - [TiDB Limitations](/tidb-limitations.md)
   - [Credits](/credits.md)
-  - [Roadmap](/tidb-roadmap.md)
+  - [Roadmap](https://docs.pingcap.com/tidb/dev/tidb-roadmap)
 - Quick Start
   - [Try Out TiDB](/quick-start-with-tidb.md)
   - [Try Out HTAP](/quick-start-with-htap.md)
@@ -947,9 +947,7 @@
       - [GBK](/character-set-gbk.md)
     - [Placement Rules in SQL](/placement-rules-in-sql.md)
     - System Tables
-      - `mysql` Schema
-        - [Overview](/mysql-schema/mysql-schema.md)
-        - [`user`](/mysql-schema/mysql-schema-user.md)
+      - [`mysql`](/mysql-schema.md)
       - INFORMATION_SCHEMA
         - [Overview](/information-schema/information-schema.md)
         - [`ANALYZE_STATUS`](/information-schema/information-schema-analyze-status.md)

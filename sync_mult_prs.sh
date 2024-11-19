@@ -22,7 +22,7 @@ cd "$SCRIPT_DIR"
 # rsync -av markdown-pages/zh/tidb/master/ markdown-pages/zh/tidb/"$RELEASE_DIR"/
 # rsync -av markdown-pages/en/tidb/master/ markdown-pages/en/tidb/"$RELEASE_DIR"/
 # rsync -av markdown-pages/en/tidb-in-kubernetes/master/ markdown-pages/en/tidb-in-kubernetes/"$RELEASE_DIR"/
-rsync -av markdown-pages/zh/tidb-in-kubernetes/master/ markdown-pages/zh/tidb-in-kubernetes/"$RELEASE_DIR"/
+# rsync -av markdown-pages/zh/tidb-in-kubernetes/master/ markdown-pages/zh/tidb-in-kubernetes/"$RELEASE_DIR"/
 
 commit_changes() {
   # Exit if TEST is set and not empty.

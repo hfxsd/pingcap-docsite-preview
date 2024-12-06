@@ -71,93 +71,93 @@ Expose every Kafka broker to TiDB Cloud VPC with unique port by using the PSC po
 
 #### Deploy a new Kafka cluster
 
-##### 1. Set up the Kafka VPC
+**1. Set up the Kafka VPC**
 
 You need to create two subnets for Kafka VPC, one for Kafka brokers, and the other for bastion node to make it easy to configure the Kafka cluster.
 
 Go to the [Google Cloud console](https://cloud.google.com/cloud-console), and navigate to the [VPC networks](https://console.cloud.google.com/networking/networks/list) page to create the Kafka VPC with following attributes:
 
-- Name: `kafka-vpc`
+- **Name**: `kafka-vpc`
 - Subnets
-    - Name: `bastion-subnet`; Region: `us-west1`; IPv4 range: `10.0.0.0/18`
-    - Name: `brokers-subnet`; Region: `us-west1`; IPv4 range: `10.64.0.0/18`
+    - **Name**: `bastion-subnet`; **Region**: `us-west1`; **IPv4 range**: `10.0.0.0/18`
+    - **Name**: `brokers-subnet`; **Region**: `us-west1`; **IPv4 range**: `10.64.0.0/18`
 - Firewall rules
     - `kafka-vpc-allow-custom`
     - `kafka-vpc-allow-ssh`
 
-##### 2. Provisioning VMs
+**2. Provisioning VMs**
 
 Go to the [VM instances](https://console.cloud.google.com/compute/instances) page to provision VMs:
 
 1. Bastion node
-    - Name: `bastion-node`
-    - Region: `us-west1`
-    - Zone: `Any`
-    - Machine Type: `e2-medium`
-    - Image: `Debian GNU/Linux 12`
-    - Network: `kafka-vpc`
-    - Subnetwork: `bastion-subnet`
-    - External IPv4 address: `Ephemeral`
+    - **Name**: `bastion-node`
+    - **Region**: `us-west1`
+    - **Zone**: `Any`
+    - **Machine Type**: `e2-medium`
+    - **Image**: `Debian GNU/Linux 12`
+    - **Network**: `kafka-vpc`
+    - **Subnetwork**: `bastion-subnet`
+    - **External IPv4 address**: `Ephemeral`
 
 2. Broker node 1
-    - Name: `broker-node1`
-    - Region: `us-west1`
-    - Zone: `us-west1-a`
-    - Machine Type: `e2-medium`
-    - Image: `Debian GNU/Linux 12`
-    - Network: `kafka-vpc`
-    - Subnetwork: `brokers-subnet`
-    - External IPv4 address: `None`
+    - **Name**: `broker-node1`
+    - **Region**: `us-west1`
+    - **Zone**: `us-west1-a`
+    - **Machine Type**: `e2-medium`
+    - **Image**: `Debian GNU/Linux 12`
+    - **Network**: `kafka-vpc`
+    - **Subnetwork**: `brokers-subnet`
+    - **External IPv4 address**: `None`
 
 3. Broker node 2
-    - Name: `broker-node2`
-    - Region: `us-west1`
-    - Zone: `us-west1-b`
-    - Machine Type: `e2-medium`
-    - Image: `Debian GNU/Linux 12`
-    - Network: `kafka-vpc`
-    - Subnetwork: `brokers-subnet`
-    - External IPv4 address: `None`
+    - **Name**: `broker-node2`
+    - **Region**: `us-west1`
+    - **Zone**: `us-west1-b`
+    - **Machine Type**: `e2-medium`
+    - **Image**: `Debian GNU/Linux 12`
+    - **Network**: `kafka-vpc`
+    - **Subnetwork**: `brokers-subnet`
+    - **External IPv4 address**: `None`
 
 4. Broker node 3
-    - Name: `broker-node3`
-    - Region: `us-west1`
-    - Zone: `us-west1-c`
-    - Machine Type: `e2-medium`
-    - Image: `Debian GNU/Linux 12`
-    - Network: `kafka-vpc`
-    - Subnetwork: `brokers-subnet`
-    - External IPv4 address: `None`
+    - **Name**: `broker-node3`
+    - **Region**: `us-west1`
+    - **Zone**: `us-west1-c`
+    - **Machine Type**: `e2-medium`
+    - **Image**: `Debian GNU/Linux 12`
+    - **Network**: `kafka-vpc`
+    - **Subnetwork**: `brokers-subnet`
+    - **External IPv4 address**: `None`
 
-##### 3. Prepare kafka runtime binaries
+**3. Prepare kafka runtime binaries**
 
 1. Go to the detail page of the bastion node. Click **SSH** to log in to the bastion node. Download binaries.
 
-```shell
-# Download kafka & openjdk, decompress. You can choose the binary version as needed.
-wget https://downloads.apache.org/kafka/3.7.1/kafka_2.13-3.7.1.tgz
-tar -zxf kafka_2.13-3.7.1.tgz
-wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
-tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz
-```
+    ```shell
+    # Download kafka & openjdk, decompress. You can choose the binary version as needed.
+    wget https://downloads.apache.org/kafka/3.7.1/kafka_2.13-3.7.1.tgz
+    tar -zxf kafka_2.13-3.7.1.tgz
+    wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
+    tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz
+    ```
 
 2. Copy binaries to every broker node.
 
-```shell
-# Run this command to authorize gcloud to access the Cloud Platform with Google user credentials
-# Please following the instruction in output to finish the login
-gcloud auth login
+    ```shell
+    # Run this command to authorize gcloud to access the Cloud Platform with Google user credentials
+    # Please following the instruction in output to finish the login
+    gcloud auth login
 
-# Copy binaries to broker nodes
-gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node1:~ --zone=us-west1-a
-gcloud compute ssh broker-node1 --zone=us-west1-a --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
-gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node2:~ --zone=us-west1-b
-gcloud compute ssh broker-node2 --zone=us-west1-b --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
-gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node3:~ --zone=us-west1-c
-gcloud compute ssh broker-node3 --zone=us-west1-c --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
-```
+    # Copy binaries to broker nodes
+    gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node1:~ --zone=us-west1-a
+    gcloud compute ssh broker-node1 --zone=us-west1-a --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
+    gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node2:~ --zone=us-west1-b
+    gcloud compute ssh broker-node2 --zone=us-west1-b --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
+    gcloud compute scp kafka_2.13-3.7.1.tgz openjdk-22.0.2_linux-x64_bin.tar.gz broker-node3:~ --zone=us-west1-c
+    gcloud compute ssh broker-node3 --zone=us-west1-c --command="tar -zxf kafka_2.13-3.7.1.tgz && tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz"
+    ```
 
-##### 4. Configure Kafka brokers
+**4. Configure Kafka brokers**
 
 1. Set up a KRaft Kafka cluster with three nodes. Each node acts as a broker and controller roles. For every broker:
 
@@ -177,233 +177,233 @@ gcloud compute ssh broker-node3 --zone=us-west1-c --command="tar -zxf kafka_2.13
         - EXTERNAL: `39092`
         - EXTERNAL advertised listener ports range: `9093~9095`
 
-2. Use SSH to log in to every broker node. Create a configuration file "~/config/server.properties" with the following content.
+2. Use SSH to log in to every broker node. Create a configuration file `~/config/server.properties` with the following content.
 
-```properties
-# broker-node1 ~/config/server.properties
-# 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
-# 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
-# 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
-# 2.2 So the EXTERNAL can be "b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9093) in EXTERNAL advertised listener ports range
-process.roles=broker,controller
-node.id=1
-controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
-listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
-inter.broker.listener.name=INTERNAL
-advertised.listeners=INTERNAL://{broker-node1-ip}:9092,EXTERNAL://b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093
-controller.listener.names=CONTROLLER
-listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
-log.dirs=./data
-```
+    ```properties
+    # broker-node1 ~/config/server.properties
+    # 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
+    # 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
+    # 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
+    # 2.2 So the EXTERNAL can be "b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9093) in EXTERNAL advertised listener ports range
+    process.roles=broker,controller
+    node.id=1
+    controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
+    listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
+    inter.broker.listener.name=INTERNAL
+    advertised.listeners=INTERNAL://{broker-node1-ip}:9092,EXTERNAL://b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093
+    controller.listener.names=CONTROLLER
+    listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+    log.dirs=./data
+    ```
 
-```properties
-# broker-node2 ~/config/server.properties
-# 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
-# 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
-# 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
-# 2.2 So the EXTERNAL can be "b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9094) in EXTERNAL advertised listener ports range
-process.roles=broker,controller
-node.id=2
-controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
-listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
-inter.broker.listener.name=INTERNAL
-advertised.listeners=INTERNAL://{broker-node2-ip}:9092,EXTERNAL://b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094
-controller.listener.names=CONTROLLER
-listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
-log.dirs=./data
-```
+    ```properties
+    # broker-node2 ~/config/server.properties
+    # 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
+    # 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
+    # 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
+    # 2.2 So the EXTERNAL can be "b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9094) in EXTERNAL advertised listener ports range
+    process.roles=broker,controller
+    node.id=2
+    controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
+    listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
+    inter.broker.listener.name=INTERNAL
+    advertised.listeners=INTERNAL://{broker-node2-ip}:9092,EXTERNAL://b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094
+    controller.listener.names=CONTROLLER
+    listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+    log.dirs=./data
+    ```
 
-```properties
-# broker-node3 ~/config/server.properties
-# 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
-# 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
-# 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
-# 2.2 So the EXTERNAL can be "b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9095) in EXTERNAL advertised listener ports range
-process.roles=broker,controller
-node.id=3
-controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
-listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
-inter.broker.listener.name=INTERNAL
-advertised.listeners=INTERNAL://{broker-node3-ip}:9092,EXTERNAL://b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095
-controller.listener.names=CONTROLLER
-listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
-log.dirs=./data
-```
+    ```properties
+    # broker-node3 ~/config/server.properties
+    # 1. Replace {broker-node1-ip}, {broker-node2-ip}, {broker-node3-ip} to real ips
+    # 2. Configure EXTERNAL in "advertised.listeners" based on the "Kafka Advertised Listener Pattern" in "Prerequisites" section
+    # 2.1 The pattern is "<broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>"
+    # 2.2 So the EXTERNAL can be "b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095", replace <broker_id> with "b" prefix plus "node.id" properties, replace <port> with a unique port(9095) in EXTERNAL advertised listener ports range
+    process.roles=broker,controller
+    node.id=3
+    controller.quorum.voters=1@{broker-node1-ip}:29092,2@{broker-node2-ip}:29092,3@{broker-node3-ip}:29092
+    listeners=INTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29092,EXTERNAL://0.0.0.0:39092
+    inter.broker.listener.name=INTERNAL
+    advertised.listeners=INTERNAL://{broker-node3-ip}:9092,EXTERNAL://b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095
+    controller.listener.names=CONTROLLER
+    listener.security.protocol.map=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+    log.dirs=./data
+    ```
 
 3. Create a script and execute it to start the Kafka broker in every broker node.
 
-```shell
-#!/bin/bash
+    ```shell
+    #!/bin/bash
 
-# Get the directory of the current script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Set JAVA_HOME to the Java installation within the script directory
-export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
-# Define the vars
-KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
-KAFKA_STORAGE_CMD=$KAFKA_DIR/kafka-storage.sh
-KAFKA_START_CMD=$KAFKA_DIR/kafka-server-start.sh
-KAFKA_DATA_DIR=$SCRIPT_DIR/data
-KAFKA_LOG_DIR=$SCRIPT_DIR/log
-KAFKA_CONFIG_DIR=$SCRIPT_DIR/config
+    # Get the directory of the current script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Set JAVA_HOME to the Java installation within the script directory
+    export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
+    # Define the vars
+    KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
+    KAFKA_STORAGE_CMD=$KAFKA_DIR/kafka-storage.sh
+    KAFKA_START_CMD=$KAFKA_DIR/kafka-server-start.sh
+    KAFKA_DATA_DIR=$SCRIPT_DIR/data
+    KAFKA_LOG_DIR=$SCRIPT_DIR/log
+    KAFKA_CONFIG_DIR=$SCRIPT_DIR/config
 
-# Cleanup step make it easy to multiple experiments
-# Find all Kafka process IDs
-KAFKA_PIDS=$(ps aux | grep 'kafka.Kafka' | grep -v grep | awk '{print $2}')
-if [ -z "$KAFKA_PIDS" ]; then
-  echo "No Kafka processes are running."
-else
-  # Kill each Kafka process
-  echo "Killing Kafka processes with PIDs: $KAFKA_PIDS"
-  for PID in $KAFKA_PIDS; do
-    kill -9 $PID
-    echo "Killed Kafka process with PID: $PID"
-  done
-  echo "All Kafka processes have been killed."
-fi
+    # Cleanup step make it easy to multiple experiments
+    # Find all Kafka process IDs
+    KAFKA_PIDS=$(ps aux | grep 'kafka.Kafka' | grep -v grep | awk '{print $2}')
+    if [ -z "$KAFKA_PIDS" ]; then
+    echo "No Kafka processes are running."
+    else
+    # Kill each Kafka process
+    echo "Killing Kafka processes with PIDs: $KAFKA_PIDS"
+    for PID in $KAFKA_PIDS; do
+        kill -9 $PID
+        echo "Killed Kafka process with PID: $PID"
+    done
+    echo "All Kafka processes have been killed."
+    fi
 
-rm -rf $KAFKA_DATA_DIR
-mkdir -p $KAFKA_DATA_DIR
-rm -rf $KAFKA_LOG_DIR
-mkdir -p $KAFKA_LOG_DIR
+    rm -rf $KAFKA_DATA_DIR
+    mkdir -p $KAFKA_DATA_DIR
+    rm -rf $KAFKA_LOG_DIR
+    mkdir -p $KAFKA_LOG_DIR
 
-# Magic id: BRl69zcmTFmiPaoaANybiw, you can use your own
-$KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log   
-LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properties" &
-```
+    # Magic id: BRl69zcmTFmiPaoaANybiw, you can use your own
+    $KAFKA_STORAGE_CMD format -t "BRl69zcmTFmiPaoaANybiw" -c "$KAFKA_CONFIG_DIR/server.properties" > $KAFKA_LOG_DIR/server_format.log   
+    LOG_DIR=$KAFKA_LOG_DIR nohup $KAFKA_START_CMD "$KAFKA_CONFIG_DIR/server.properties" &
+    ```
 
-##### 5. Test the Kafka cluster in the bastion node
+**5. Test the Kafka cluster in the bastion node**
 
 1. Test the Kafka bootstrap.
 
-```shell
-export JAVA_HOME=~/jdk-22.0.2
+    ```shell
+    export JAVA_HOME=~/jdk-22.0.2
 
-# Bootstrap from INTERNAL listener
-./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:9092 | grep 9092
-# Expected output, order may be different.
-{broker-node1-ip}:9092 (id: 1 rack: null) -> (
-{broker-node2-ip}:9092 (id: 2 rack: null) -> (
-{broker-node3-ip}:9092 (id: 3 rack: null) -> (
+    # Bootstrap from INTERNAL listener
+    ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:9092 | grep 9092
+    # Expected output, order may be different.
+    {broker-node1-ip}:9092 (id: 1 rack: null) -> (
+    {broker-node2-ip}:9092 (id: 2 rack: null) -> (
+    {broker-node3-ip}:9092 (id: 3 rack: null) -> (
 
-# Bootstrap from EXTERNAL listener
-./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
-# Expected output(last 3 lines), order may be different.
-# The differences of output from "bootstrap from INTERNAL listener" is that there are exceptions or errors since advertised listeners can not be resolved in Kafka VPC.
-# We will make them resolvable in TiDB Cloud side and make it route to the right broker. 
-b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-```
+    # Bootstrap from EXTERNAL listener
+    ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server {one_of_broker_ip}:39092
+    # Expected output(last 3 lines), order may be different.
+    # The differences of output from "bootstrap from INTERNAL listener" is that there are exceptions or errors since advertised listeners can not be resolved in Kafka VPC.
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker. 
+    b1.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    b2.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    ```
 
 2. Create a producer script `produce.sh` in the bastion node.
 
-```shell
-#!/bin/bash
-BROKER_LIST=$1 # "{broker_address1},{broker_address2}..."
+    ```shell
+    #!/bin/bash
+    BROKER_LIST=$1 # "{broker_address1},{broker_address2}..."
 
-# Get the directory of the current script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Set JAVA_HOME to the Java installation within the script directory
-export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
-# Define the Kafka directory
-KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
-TOPIC="test-topic"
+    # Get the directory of the current script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Set JAVA_HOME to the Java installation within the script directory
+    export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
+    # Define the Kafka directory
+    KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
+    TOPIC="test-topic"
 
-# Create a topic if it does not exist
-create_topic() {
-  echo "Creating topic if it does not exist..."
-  $KAFKA_DIR/kafka-topics.sh --create --topic $TOPIC --bootstrap-server $BROKER_LIST --if-not-exists --partitions 3 --replication-factor 3
-}
+    # Create a topic if it does not exist
+    create_topic() {
+    echo "Creating topic if it does not exist..."
+    $KAFKA_DIR/kafka-topics.sh --create --topic $TOPIC --bootstrap-server $BROKER_LIST --if-not-exists --partitions 3 --replication-factor 3
+    }
 
-# Produce messages to the topic
-produce_messages() {
-  echo "Producing messages to the topic..."
-  for ((chrono=1; chrono <= 10; chrono++)); do
-    message="Test message "$chrono
-    echo "Create "$message
-    echo $message | $KAFKA_DIR/kafka-console-producer.sh --broker-list $BROKER_LIST --topic $TOPIC
-  done
-}
-create_topic
-produce_messages 
-```
+    # Produce messages to the topic
+    produce_messages() {
+    echo "Producing messages to the topic..."
+    for ((chrono=1; chrono <= 10; chrono++)); do
+        message="Test message "$chrono
+        echo "Create "$message
+        echo $message | $KAFKA_DIR/kafka-console-producer.sh --broker-list $BROKER_LIST --topic $TOPIC
+    done
+    }
+    create_topic
+    produce_messages 
+    ```
 
 3. Create a consumer script `consume.sh` in the bastion node.
 
-```shell
-#!/bin/bash
+    ```shell
+    #!/bin/bash
 
-BROKER_LIST=$1 # "{broker_address1},{broker_address2}..."
+    BROKER_LIST=$1 # "{broker_address1},{broker_address2}..."
 
-# Get the directory of the current script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# Set JAVA_HOME to the Java installation within the script directory
-export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
-# Define the Kafka directory
-KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
-TOPIC="test-topic"
-CONSUMER_GROUP="test-group"
-# Consume messages from the topic
-consume_messages() {
-  echo "Consuming messages from the topic..."
-  $KAFKA_DIR/kafka-console-consumer.sh --bootstrap-server $BROKER_LIST --topic $TOPIC --from-beginning --timeout-ms 5000 --consumer-property group.id=$CONSUMER_GROUP
-}
-consume_messages
-```
+    # Get the directory of the current script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # Set JAVA_HOME to the Java installation within the script directory
+    export JAVA_HOME="$SCRIPT_DIR/jdk-22.0.2"
+    # Define the Kafka directory
+    KAFKA_DIR="$SCRIPT_DIR/kafka_2.13-3.7.1/bin"
+    TOPIC="test-topic"
+    CONSUMER_GROUP="test-group"
+    # Consume messages from the topic
+    consume_messages() {
+    echo "Consuming messages from the topic..."
+    $KAFKA_DIR/kafka-console-consumer.sh --bootstrap-server $BROKER_LIST --topic $TOPIC --from-beginning --timeout-ms 5000 --consumer-property group.id=$CONSUMER_GROUP
+    }
+    consume_messages
+    ```
 
 4. Execute `produce.sh` and `consume.sh` to verify that the Kafka cluster is running. These scripts will also be reused for later network connection testing. The script will create a topic with `--partitions 3 --replication-factor 3`. Make sure all three brokers contain data. Make sure the script will connect to all three brokers to guarantee that network connection will be tested.
 
-```shell
-# Test write message. 
-./produce.sh {one_of_broker_ip}:9092
-```
+    ```shell
+    # Test write message. 
+    ./produce.sh {one_of_broker_ip}:9092
+    ```
 
-```text
-# Expected output
-Creating topic if it does not exist...
+    ```text
+    # Expected output
+    Creating topic if it does not exist...
 
-Producing messages to the topic...
-Create Test message 1
->>Create Test message 2
->>Create Test message 3
->>Create Test message 4
->>Create Test message 5
->>Create Test message 6
->>Create Test message 7
->>Create Test message 8
->>Create Test message 9
->>Create Test message 10
-```
+    Producing messages to the topic...
+    Create Test message 1
+    >>Create Test message 2
+    >>Create Test message 3
+    >>Create Test message 4
+    >>Create Test message 5
+    >>Create Test message 6
+    >>Create Test message 7
+    >>Create Test message 8
+    >>Create Test message 9
+    >>Create Test message 10
+    ```
 
-```shell
-# Test read message
-./consume.sh {one_of_broker_ip}:9092
-```
+    ```shell
+    # Test read message
+    ./consume.sh {one_of_broker_ip}:9092
+    ```
 
-```text
-# Expected example output (message order may be different)
-Consuming messages from the topic...
-Test message 3
-Test message 4
-Test message 5
-Test message 9
-Test message 10
-Test message 6
-Test message 8
-Test message 1
-Test message 2
-Test message 7
-[2024-11-01 08:54:27,547] ERROR Error processing message, terminating consumer process:  (kafka.tools.ConsoleConsumer$)
-org.apache.kafka.common.errors.TimeoutException
-Processed a total of 10 messages
-```
+    ```text
+    # Expected example output (message order may be different)
+    Consuming messages from the topic...
+    Test message 3
+    Test message 4
+    Test message 5
+    Test message 9
+    Test message 10
+    Test message 6
+    Test message 8
+    Test message 1
+    Test message 2
+    Test message 7
+    [2024-11-01 08:54:27,547] ERROR Error processing message, terminating consumer process:  (kafka.tools.ConsoleConsumer$)
+    org.apache.kafka.common.errors.TimeoutException
+    Processed a total of 10 messages
+    ```
 
 #### Reconfigure a running Kafka cluster
 
 Ensure that your Kafka cluster is deployed in the same region as the TiDB cluster. It is recommended that the zones are also in the same region to reduce cross-zone traffic.
 
-##### 1. Configure the EXTERNAL listener for brokers
+**1. Configure the EXTERNAL listener for brokers**
 
 The following configuration applies to a Kafka KRaft cluster. The ZK mode configuration is similar.
 
@@ -432,7 +432,7 @@ The following configuration applies to a Kafka KRaft cluster. The ZK mode config
 
 3. After you reconfigure all the brokers, restart your Kafka brokers one by one.
 
-##### 2. Test EXTERNAL listener settings in your internal network
+**2. Test EXTERNAL listener settings in your internal network**
 
 You can download Kafka and OpenJDK in your Kafka client node.
 
@@ -444,7 +444,7 @@ wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e
 tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz
 ```
 
-Test if the bootstrap works as expected by executing the following script.
+Execute the following script to test if the bootstrap works as expected.
 
 ```shell
 export JAVA_HOME=~/jdk-22.0.2
@@ -464,66 +464,66 @@ b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 1. Go to the [Network endpoint group](https://console.cloud.google.com/compute/networkendpointgroups/list) page. Create a network endpoint group.
 
-    - Name: `kafka-neg`
-    - Network endpoint group type: `Port Mapping NEG(Regional)`
-       - Region: `us-west1`
-       - Network: `kafka-vpc`
-       - Subnet: `brokers-subnet`
+    - **Name**: `kafka-neg`
+    - **Network endpoint group type**: `Port Mapping NEG(Regional)`
+       - **Region**: `us-west1`
+       - **Network**: `kafka-vpc`
+       - **Subnet**: `brokers-subnet`
 
 2. Go to the detail page of the network endpoint group to add network endpoints to configure port mapping to broker nodes.
 
     1. Network endpoint 1
-        - Instance: `broker-node1`
-        - VM Port: `39092`
-        - Client Port: `9093`
+        - **Instance**: `broker-node1`
+        - **VM Port**: `39092`
+        - **Client Port**: `9093`
     2. Network endpoint 2
-        - Instance: `broker-node2`
-        - VM Port: `39092`
-        - Client Port: `9094`
+        - **Instance**: `broker-node2`
+        - **VM Port**: `39092`
+        - **Client Port**: `9094`
     3. Network endpoint 3
-        - Instance: `broker-node3`
-        - VM Port: `39092`
-        - Client Port: `9095`
+        - **Instance**: `broker-node3`
+        - **VM Port**: `39092`
+        - **Client Port**: `9095`
 
 3. Go to the [Load balancing](https://console.cloud.google.com/net-services/loadbalancing/list/loadBalancers) page. Create a load balancer:
 
-    - Type of load balancer: `Network Load Balancer`
-    - Proxy or Passthrough: `Passthrough`
-    - Public facing or internal: `Internal`
-    - Load Balancer name: `kafka-lb`
-    - Region: `us-west1`
-    - Network: `kafka-vpc`
+    - **Type of load balancer**: `Network Load Balancer`
+    - **Proxy or Passthrough**: `Passthrough`
+    - **Public facing or internal**: `Internal`
+    - **Load Balancer name**: `kafka-lb`
+    - **Region**: `us-west1`
+    - **Network**: `kafka-vpc`
     - Backend configuration
-        - Backend type: `Port mapping network endpoint group`
-        - Protocol: `TCP`
-        - Port mapping network endpoint group: `kafka-neg`
+        - **Backend type**: `Port mapping network endpoint group`
+        - **Protocol**: `TCP`
+        - **Port mapping network endpoint group**: `kafka-neg`
     - Frontend configuration
-        - Subnetwork: `brokers-subnet`
-        - Ports: `All`
+        - **Subnetwork**: `brokers-subnet`
+        - **Ports**: `All`
 
 4. Go to [**Private Service Connect** > **PUBLISH SERVICE**](https://console.cloud.google.com/net-services/psc/list/producers).
 
-    - Load Balancer Type: `Internal passthrough Network Load Balancer`
-    - Internal load balancer: `kafka-lb`
-    - Service name: `kafka-psc`
-    - Subnets: `RESERVE NEW SUBNET`
-       - Name: `psc-subnet`
-       - VPC Network: `kafka-vpc`
-       - Region: `us-west1`
-       - IPv4 range: `10.128.0.0/18`
-    - Accepted projects: the Google Cloud project of TiDB Cloud you got in [Prerequisites](#prerequisites), for example `tidbcloud-prod-000`.
+    - **Load Balancer Type**: `Internal passthrough Network Load Balancer`
+    - **Internal load balancer**: `kafka-lb`
+    - **Service name**: `kafka-psc`
+    - **Subnets**: `RESERVE NEW SUBNET`
+       - **Name**: `psc-subnet`
+       - **VPC Network**: `kafka-vpc`
+       - **Region**: `us-west1`
+       - **IPv4 range**: `10.128.0.0/18`
+    - **Accepted projects**: the Google Cloud project of TiDB Cloud you got in [Prerequisites](#prerequisites), for example `tidbcloud-prod-000`.
 
 5. Navigate to the detail page of the `kafka-psc`. Note down the **Service attachment**, for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-psc`. You will use it in TiDB Cloud to connect to this PSC.
 
 6. Go to the detail page of the VPC network `kafka-vpc`. Add a firewall rule to allow PSC traffic to all brokers.
 
-    - Name: `allow-psc-traffic`
-    - Direction of traffic: `Ingress`
-    - Action on match: `Allow`
-    - Targets: `All instances in the network`
-    - Source filter: `IPv4 ranges`
-    - Source IPv4 ranges: `10.128.0.0/18`. The range of psc-subnet.
-    - Protocols and ports: Allow all
+    - **Name**: `allow-psc-traffic`
+    - **Direction of traffic**: `Ingress`
+    - **Action on match**: `Allow`
+    - **Targets**: `All instances in the network`
+    - **Source filter**: `IPv4 ranges`
+    - **Source IPv4 ranges**: `10.128.0.0/18`. The range of psc-subnet.
+    - **Protocols and ports**: Allow all
 
 ### Step 3. Connect from TiDB Cloud
 
@@ -531,9 +531,9 @@ b3.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 3 rack: null) -> ERROR: org.
 
 2. After you proceed to the "Configure the changefeed target->Connectivity Method->Private Service Connect", you just fill the following fields with corresponding values and others fields as needed
 
-    - Kafka Advertised Listener Pattern: `abc`. It is the same as the unique random string we used to generate **Kafka Advertised Listener Pattern** in [Prerequisites](#prerequisites).
-    - Service Attachment: the kafka service attachment of PSC, for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-psc`.
-    - Bootstrap Ports: `9092,9093,9094`
+    - **Kafka Advertised Listener Pattern**: `abc`. It is the same as the unique random string we used to generate **Kafka Advertised Listener Pattern** in [Prerequisites](#prerequisites).
+    - **Service Attachment**: the kafka service attachment of PSC, for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-psc`.
+    - **Bootstrap Ports**: `9092,9093,9094`
 
 3. Continue to follow the guideline in [Sink to Apache Kafka](/tidb-cloud/changefeed-sink-to-apache-kafka.md).
 
@@ -549,121 +549,121 @@ Assume that you already have a Kafka cluster running in the same region as the T
 
 1. Go to the [Instance groups](https://console.cloud.google.com/compute/instanceGroups/list) page, and create an instance group for Kafka-proxy.
 
-    - Name: `kafka-proxy-ig`
+    - **Name**: `kafka-proxy-ig`
     - Instance template:
-        - Name: `kafka-proxy-tpl`
-        - Location: `Regional`
-        - Region: `us-west1`
-        - Machine type: `e2-medium`. You can choose your own machine type based on you workload.
-        - Network: your VPC network that can connect to Kafka cluster.
-        - Subnetwork: your subnet that can connect to Kafka cluster.
-        - External IPv4 address: `Ephemeral`. Enable Internet access to make it easy configure Kafka-proxy, you can select **None** in your production environment and log in to the node in your way.
-    - Location: Single zone
-    - Region: `us-west1`
-    - Zone: choose your one of brokers' zones 
-    - Autoscaling mode: `Off`
-    - Minimum number of instances: `1`
-    - Maximum number of instances: `1`. Kafka-proxy does not support cluster mode, so only one instance should be deployed. Each Kafka-proxy randomly maps local ports to brokers' ports, resulting in different mappings across proxies. Deploying multiple Kafka-proxies behind a load balancer can cause issues. If a Kafka client connects to one proxy and then accesses a broker through another, the request might be routed to the wrong broker.
+        - **Name**: `kafka-proxy-tpl`
+        - **Location**: `Regional`
+        - **Region**: `us-west1`
+        - **Machine type**: `e2-medium`. You can choose your own machine type based on you workload.
+        - **Network**: your VPC network that can connect to Kafka cluster.
+        - **Subnetwork**: your subnet that can connect to Kafka cluster.
+        - **External IPv4 address**: `Ephemeral`. Enable Internet access to make it easy configure Kafka-proxy, you can select **None** in your production environment and log in to the node in your way.
+    - **Location**: `Single zone`
+    - **Region**: `us-west1`
+    - **Zone**: choose your one of brokers' zones.
+    - **Autoscaling mode**: `Off`
+    - **Minimum number of instances**: `1`
+    - **Maximum number of instances**: `1`. Kafka-proxy does not support the cluster mode, so only one instance can be deployed. Each Kafka-proxy randomly maps local ports to brokers' ports, resulting in different mappings across proxies. Deploying multiple Kafka-proxies behind a load balancer can cause issues. If a Kafka client connects to one proxy and then accesses a broker through another, the request might be routed to the wrong broker.
 
 2. Go to the detail page of the node in kafka-proxy-ig. Click **SSH** to log in to the node. Download the binaries:
 
-```shell
-# You can choose another version 
-wget https://github.com/grepplabs/kafka-proxy/releases/download/v0.3.11/kafka-proxy-v0.3.11-linux-amd64.tar.gz
-tar -zxf kafka-proxy-v0.3.11-linux-amd64.tar.gz
-```
+    ```shell
+    # You can choose another version 
+    wget https://github.com/grepplabs/kafka-proxy/releases/download/v0.3.11/kafka-proxy-v0.3.11-linux-amd64.tar.gz
+    tar -zxf kafka-proxy-v0.3.11-linux-amd64.tar.gz
+    ```
 
 3. Run Kafka-proxy and connect to Kafka brokers.
 
-```shell
-# There 3 kinds of parameters need to feed to the Kafka-proxy
-# 1. --bootstrap-server-mapping defines the bootstrap mapping, suggest configure 3 mappings, one per zone for resilience.
-#   a) Kafka broker address; 
-#   b) Local address for the broker in Kafka-proxy; 
-#   c) Advertised listener for the broker if Kafka clients bootstrap from Kafka-proxy
-# 2. --dynamic-sequential-min-port defines the start port of the random mapping for others brokers
-# 3. --dynamic-advertised-listener defines advertised listener address for others brokers based on the pattern got from "Prerequisites" section
-#   a) The pattern: <broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>
-#   b) Replace <broker_id> to fixed lower case string, for example "brokers", your can use your own string, but it's MUST. This will help TiDB Cloud route requests properly.
-#   c) Remove ":<port>"
-#   d) The advertised listener address would be: brokers.abc.us-west1.gcp.3199745.tidbcloud.com
-./kafka-proxy server \
-        --bootstrap-server-mapping "{address_of_broker1},0.0.0.0:9092,b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092" \
-        --bootstrap-server-mapping "{address_of_broker2},0.0.0.0:9093,b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093" \
-        --bootstrap-server-mapping "{address_of_broker3},0.0.0.0:9094,b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094" \
-        --dynamic-sequential-min-port=9095 \
-        --dynamic-advertised-listener=brokers.abc.us-west1.gcp.3199745.tidbcloud.com > ./kafka_proxy.log 2>&1 &
-```
+    ```shell
+    # There 3 kinds of parameters need to feed to the Kafka-proxy
+    # 1. --bootstrap-server-mapping defines the bootstrap mapping, suggest configure 3 mappings, one per zone for resilience.
+    #   a) Kafka broker address; 
+    #   b) Local address for the broker in Kafka-proxy; 
+    #   c) Advertised listener for the broker if Kafka clients bootstrap from Kafka-proxy
+    # 2. --dynamic-sequential-min-port defines the start port of the random mapping for others brokers
+    # 3. --dynamic-advertised-listener defines advertised listener address for others brokers based on the pattern got from "Prerequisites" section
+    #   a) The pattern: <broker_id>.abc.us-west1.gcp.3199745.tidbcloud.com:<port>
+    #   b) Replace <broker_id> to fixed lower case string, for example "brokers", your can use your own string, but it's MUST. This will help TiDB Cloud route requests properly.
+    #   c) Remove ":<port>"
+    #   d) The advertised listener address would be: brokers.abc.us-west1.gcp.3199745.tidbcloud.com
+    ./kafka-proxy server \
+            --bootstrap-server-mapping "{address_of_broker1},0.0.0.0:9092,b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092" \
+            --bootstrap-server-mapping "{address_of_broker2},0.0.0.0:9093,b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093" \
+            --bootstrap-server-mapping "{address_of_broker3},0.0.0.0:9094,b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094" \
+            --dynamic-sequential-min-port=9095 \
+            --dynamic-advertised-listener=brokers.abc.us-west1.gcp.3199745.tidbcloud.com > ./kafka_proxy.log 2>&1 &
+    ```
 
 4. Test bootstrap in Kafka-proxy node.
 
-```shell
-# Download kafka & openjdk, decompress. Your can choose the binary version as needed.
-wget https://downloads.apache.org/kafka/3.7.1/kafka_2.13-3.7.1.tgz
-tar -zxf kafka_2.13-3.7.1.tgz
-wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
-tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz
+    ```shell
+    # Download kafka & openjdk, decompress. Your can choose the binary version as needed.
+    wget https://downloads.apache.org/kafka/3.7.1/kafka_2.13-3.7.1.tgz
+    tar -zxf kafka_2.13-3.7.1.tgz
+    wget https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz
+    tar -zxf openjdk-22.0.2_linux-x64_bin.tar.gz
 
-export JAVA_HOME=~/jdk-22.0.2
+    export JAVA_HOME=~/jdk-22.0.2
 
-./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server 0.0.0.0:9092
-# Expected output(lines in tail), order may be different.
-# There are exceptions or errors since advertised listeners can not be resolved in your network.
-# We will make them resolvable in TiDB Cloud side and make it route to the right broker. 
-b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-brokers.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 4 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-brokers.abc.us-west1.gcp.3199745.tidbcloud.com:9096 (id: 5 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
-...
-```
+    ./kafka_2.13-3.7.1/bin/kafka-broker-api-versions.sh --bootstrap-server 0.0.0.0:9092
+    # Expected output(lines in tail), order may be different.
+    # There are exceptions or errors since advertised listeners can not be resolved in your network.
+    # We will make them resolvable in TiDB Cloud side and make it route to the right broker. 
+    b1.abc.us-west1.gcp.3199745.tidbcloud.com:9092 (id: 1 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    b2.abc.us-west1.gcp.3199745.tidbcloud.com:9093 (id: 2 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    b3.abc.us-west1.gcp.3199745.tidbcloud.com:9094 (id: 3 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    brokers.abc.us-west1.gcp.3199745.tidbcloud.com:9095 (id: 4 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    brokers.abc.us-west1.gcp.3199745.tidbcloud.com:9096 (id: 5 rack: null) -> ERROR: org.apache.kafka.common.errors.DisconnectException
+    ...
+    ```
 
 ### Step 2. Expose Kafka-proxy as Private Service Connect Service
 
 1. Go to the [Load balancing](https://console.cloud.google.com/net-services/loadbalancing/list/loadBalancers) page, and create a load balancer.
 
-    - Type of load balancer: Network Load Balancer
-    - Proxy or Passthrough: Passthrough
-    - Public facing or internal: Internal
-    - Load Balancer name: kafka-proxy-lb
-    - Region: us-west1
-    - Network: your network
+    - **Type of load balancer**: `Network Load Balancer`
+    - **Proxy or Passthrough**: `Passthrough`
+    - **Public facing or internal**: `Internal`
+    - **Load Balancer name**: `kafka-proxy-lb`
+    - **Region**: `us-west1`
+    - **Network**: your network
     - Backend configuration
-        - Backend type: Instance group
-        - Protocol: TCP
-        - Instance group: kafka-proxy-ig
+        - **Backend type**: `Instance group`
+        - **Protocol**: `TCP`
+        - **Instance group**: `kafka-proxy-ig`
     - Frontend configuration
-        - Subnetwork: your subnet
-        - Ports: All
+        - **Subnetwork**: your subnet
+        - **Ports**: `All`
         - Heath check:
-            - Name: kafka-proxy-hc
-            - Scope: Regional
-            - Protocol: TCP
-            - Port: 9092. You can choose one of the bootstrap port in Kafka-proxy.
+            - **Name**: `kafka-proxy-hc`
+            - **Scope**: `Regional`
+            - **Protocol**: `TCP`
+            - **Port**: `9092`. You can choose one of the bootstrap port in Kafka-proxy.
 
 2. Go to [**Private Service Connect** > **PUBLISH SERVICE**](https://console.cloud.google.com/net-services/psc/list/producers).
 
-    - Load Balancer Type: Internal passthrough Network Load Balancer
-    - Internal load balancer: kafka-proxy-lb
-    - Service name: kafka-proxy-psc
-    - Subnets: RESERVE NEW SUBNET
-        - Name: proxy-psc-subnet
-        - VPC Network: your network
-        - Region: us-west1
-        - IPv4 range: set the CIDR based on your network planing
-    - Accepted projects: Google Cloud project of TiDB Cloud you got in "Prerequisites" section, for example `tidbcloud-prod-000`
+    - **Load Balancer Type**: `Internal passthrough Network Load Balancer`
+    - **Internal load balancer**: `kafka-proxy-lb`
+    - **Service name**: `kafka-proxy-psc`
+    - **Subnets**: `RESERVE NEW SUBNET`
+        - **Name**: `proxy-psc-subnet`
+        - **VPC Network**: your network
+        - **Region**: `us-west1`
+        - **IPv4 range**: set the CIDR based on your network planing
+    - **Accepted projects**: Google Cloud project of TiDB Cloud you get in [Prerequisites](#prerequisites), for example `tidbcloud-prod-000`.
 
 3. After creation done, navigate to the detail page of the "kafka-proxy-psc". Note down the "Service attachment", for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-proxy-psc`, which will be used in TiDB Cloud to connect to this PSC.
 
 4. Go to detail page of your VPC network. Add a firewall rule to allow PSC traffic to all brokers.
 
-    - Name: allow-proxy-psc-traffic
-    - Direction of traffic: Ingress
-    - Action on match: Allow
-    - Targets: All instances in the network
-    - Source filter: IPv4 ranges
-    - Source IPv4 ranges: the CIDR of proxy-psc-subnet
-    - Protocols and ports: Allow all
+    - **Name**: `allow-proxy-psc-traffic`
+    - **Direction of traffic**: `Ingress`
+    - **Action on match**: `Allow`
+    - **Targets**: All instances in the network
+    - **Source filter**: `IPv4 ranges`
+    - **Source IPv4 ranges**: the CIDR of proxy-psc-subnet
+    - **Protocols and ports**: Allow all
 
 ### Step 3. Connect from TiDB Cloud
 
@@ -671,9 +671,9 @@ brokers.abc.us-west1.gcp.3199745.tidbcloud.com:9096 (id: 5 rack: null) -> ERROR:
 
 2. After you proceed to the **Configure the changefeed target** > **Connectivity Method** > **Private Service Connect**, fill in the following fields with corresponding values and others fields as needed.
 
-   - Kafka Advertised Listener Pattern: `abc`. The same as the unique random string you use to generate **Kafka Advertised Listener Pattern** in [Prerequistes](#prerequisites).
-   - Service Attachment: the kafka-proxy service attachment of PSC, for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-proxy-psc`.
-   - Bootstrap Ports: `9092,9093,9094`
+   - **Kafka Advertised Listener Pattern**: `abc`. The same as the unique random string you use to generate **Kafka Advertised Listener Pattern** in [Prerequistes](#prerequisites).
+   - **Service Attachment**: the kafka-proxy service attachment of PSC, for example `projects/tidbcloud-dp-stg-000/regions/us-west1/serviceAttachments/kafka-proxy-psc`.
+   - **Bootstrap Ports**: `9092,9093,9094`
 
 3. Continue to follow the guideline in [Sink to Apache Kafka](/tidb-cloud/changefeed-sink-to-apache-kafka.md).
 

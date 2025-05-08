@@ -39,7 +39,7 @@ TiDB 版本：8.5.2
     - 修复设置 `zone` 标签后，验证时间戳的过程中获取 TSO 失败的问题 [#59402](https://github.com/pingcap/tidb/issues/59402) @[ekexium](https://github.com/ekexium)
     - 修复当 Hash Join 执行出错时，返回错误结果但未报错的问题 [#59377](https://github.com/pingcap/tidb/issues/59377) @[xzhangxian1008](https://github.com/xzhangxian1008)
     - 修复 TiFlash 可能崩溃或返回错误结果的问题 [#60517](https://github.com/pingcap/tidb/issues/60517) @[wintalker](https://github.com/wintalker)
-    - 修复当 `ORDER BY` 进行并行排序时，执行卡住的问题 [#59655](https://github.com/pingcap/tidb/issues/59655) @[xzhangxian1008](https://github.com/xzhangxian1008)
+    - 修复当 `ORDER BY` 进行并行排序遇到错误或者查询被取消时，执行卡住的问题 [#59655](https://github.com/pingcap/tidb/issues/59655) @[xzhangxian1008](https://github.com/xzhangxian1008)
     - (dup): release-7.5.6.md > 错误修复> TiDB - 修复在查询包含生成列的分区表时报错的问题 [#58475](https://github.com/pingcap/tidb/issues/58475) @[joechenrh](https://github.com/joechenrh)
     - (dup): release-6.5.12.md > 错误修复> TiDB - 修复创建两个相同名称的视图而没有报错的问题 [#58769](https://github.com/pingcap/tidb/issues/58769) @[tiancaiamao](https://github.com/tiancaiamao)
     - (dup): release-7.5.6.md > 错误修复> TiDB - 修复 Join 的等值条件两边数据类型不同，可能导致 TiFlash 产生错误结果的问题 [#59877](https://github.com/pingcap/tidb/issues/59877) @[yibin87](https://github.com/yibin87)
@@ -72,7 +72,7 @@ TiDB 版本：8.5.2
 
 + TiKV
 
-    - 修复 txn_status_cache 中可能的死锁问题 [#18384](https://github.com/tikv/tikv/issues/18384) @[ekexium](https://github.com/ekexium)
+    - 修复 `txn_status_cache` 中可能出现死锁的问题 [#18384](https://github.com/tikv/tikv/issues/18384) @[ekexium](https://github.com/ekexium)
     - (dup): release-7.5.6.md > 错误修复> TiKV - 修复 Resolved-TS 监控和日志可能显示异常的问题 [#17989](https://github.com/tikv/tikv/issues/17989) @[ekexium](https://github.com/ekexium)
     - (dup): release-7.5.6.md > 错误修复> TiKV - 修复 Region 合并时可能因 Raft index 匹配异常而导致 TiKV 异常退出的问题 [#18129](https://github.com/tikv/tikv/issues/18129) @[glorv](https://github.com/glorv)
     - (dup): release-8.1.2.md > 错误修复> TiKV - 修复磁盘卡住时，TiKV 无法向 PD 上报心跳的问题 [#17939](https://github.com/tikv/tikv/issues/17939) @[LykxSassinator](https://github.com/LykxSassinator)

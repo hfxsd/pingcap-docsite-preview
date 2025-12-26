@@ -29,7 +29,7 @@ The mechanism works as follows:
     - Manage load balancer
     - Manage endpoint services
 
-- {{{ .essential }}} information: confirm that your {{{ .essential }}} is active in AWS. Retrieve and save the following details for later use:
+- TiDB Cloud Essential information: confirm that your TiDB Cloud Essential is active in AWS. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)

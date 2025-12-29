@@ -21,7 +21,7 @@ This document describes how to connect to an Amazon RDS instance using an AWS En
     - Manage load balancer
     - Manage endpoint services
 
-- {{{ .essential }}} information: confirm that your {{{ .essential }}} is active in AWS. Retrieve and save the following details for later use:
+- TiDB Cloud Essential information: confirm that your TiDB Cloud Essential is active in AWS. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)
@@ -38,8 +38,8 @@ Identify an Amazon RDS instance to use, or [create a new one](https://docs.aws.a
 
 The Amazon RDS instance must meet the following requirements:
 
-- Region match: the instance must reside in the same AWS region as your {{{ .essential }}} cluster.
-- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your {{{ .essential }}} cluster.
+- Region match: the instance must reside in the same AWS region as your TiDB Cloud Essential cluster.
+- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your TiDB Cloud Essential cluster.
 - Set your Amazon RDS instance with a proper security group, and it is accessible within the VPC. For example, you can create a security group with the following rules:
     - An inbound rule that allows MySQL/Aurora: 
         Type: `MySQL/Aurora`
@@ -73,7 +73,7 @@ Set up the load balancer in the same region of your RDS:
     - **Schema**: `Internal`
     - **Load balancer IP address type**: `IPv4`
     - **VPC**: the VPC where your RDS is located
-    - **Availability Zones**: it must overlap with your {{{ .essential }}} cluster
+    - **Availability Zones**: it must overlap with your TiDB Cloud Essential cluster
     - **Security groups**: create a new security group with the following rules:
         - An inbound rule that allows MySQL/Aurora: 
             Type: `MySQL/Aurora`

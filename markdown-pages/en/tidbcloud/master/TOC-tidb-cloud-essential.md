@@ -273,7 +273,7 @@
     - [Connect via Private Endpoint with Alibaba Cloud](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
     - [Configure Firewall Rules for Public Endpoints](/tidb-cloud/configure-serverless-firewall-rules-for-public-endpoints.md)
     - [TLS Connections to TiDB Cloud](/tidb-cloud/secure-connections-to-serverless-clusters.md)
-  - Private Link Connection ![BETA](/media/tidb-cloud/blank_transparent_placeholder.png)
+  - Private Link Connection
     - [Private Link Connection Overview](/tidb-cloud/serverless-private-link-connection.md)
     - [Connect to AWS RDS](/tidb-cloud/serverless-private-link-connection-to-aws-rds.md)
     - [Connect to Alibaba Cloud RDS](/tidb-cloud/serverless-private-link-connection-to-alicloud-rds.md)
@@ -666,7 +666,7 @@
     - [TiDB Cloud Partners](/tidb-cloud/tidb-cloud-partners.md)
     - [MSP Customer](/tidb-cloud/managed-service-provider-customer.md)
     - [Reseller's Customer](/tidb-cloud/cppo-customer.md)
-  - [TiDB Cloud Starter and Essential Limitations](/tidb-cloud/serverless-limitations.md)
+  - [{{{ .starter }}} and Essential Limitations](/tidb-cloud/serverless-limitations.md)
   - [Limited SQL Features on TiDB Cloud](/tidb-cloud/limited-sql-features.md)
   - [TiDB Limitations](/tidb-limitations.md)
   - [System Variables](/system-variables.md)

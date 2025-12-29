@@ -16,7 +16,7 @@ This document describes how to connect to a Confluent Cloud Dedicated cluster on
    
 - You have a Confluent Cloud account.
 
-- Confirm that your TiDB Cloud Essential is active in AWS. Retrieve and save the following details for later use:
+- Confirm that your {{{ .essential }}} is active in AWS. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)
@@ -34,8 +34,8 @@ Identify a Confluent Cloud network you want to use, or [create a new Confluent C
 The Confluent Cloud network must meet the following requirements:
 
 - Type: the network must be a privatelink network.
-- Region match: the instance must reside in the same AWS region as your TiDB Cloud Essential cluster.
-- AZ (Availability Zone) availability: the availability zones must overlap with those of your TiDB Cloud Essential cluster.
+- Region match: the instance must reside in the same AWS region as your {{{ .essential }}} cluster.
+- AZ (Availability Zone) availability: the availability zones must overlap with those of your {{{ .essential }}} cluster.
 
 To get the unique name of the Confluent Cloud network:
 
@@ -100,7 +100,7 @@ You can also refer to [Create an AWS Endpoint Service Private Link Connection](/
 
 ### 2. Attach domains to the private link connection
 
-You can create a private link connection using the TiDB Cloud console or the TiDB Cloud CLI.
+You can attach domains to a private link connection using the TiDB Cloud console or the TiDB Cloud CLI.
 
 <SimpleTab>
 <div label="Console">

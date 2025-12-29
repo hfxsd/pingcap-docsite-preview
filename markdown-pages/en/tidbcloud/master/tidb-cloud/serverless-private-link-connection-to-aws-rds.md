@@ -21,7 +21,7 @@ This document describes how to connect to an Amazon RDS instance using an AWS En
     - Manage load balancer
     - Manage endpoint services
 
-- TiDB Cloud Essential information: confirm that your TiDB Cloud Essential is active in AWS. Retrieve and save the following details for later use:
+- {{{ .essential }}} information: confirm that your {{{ .essential }}} is active in AWS. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)
@@ -38,8 +38,8 @@ Identify an Amazon RDS instance to use, or [create a new one](https://docs.aws.a
 
 The Amazon RDS instance must meet the following requirements:
 
-- Region match: the instance must reside in the same AWS region as your TiDB Cloud Essential cluster.
-- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your TiDB Cloud Essential cluster.
+- Region match: the instance must reside in the same AWS region as your {{{ .essential }}} cluster.
+- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your {{{ .essential }}} cluster.
 - Set your Amazon RDS instance with a proper security group, and it is accessible within the VPC.
 
 > **Note**
@@ -67,7 +67,7 @@ Set up the load balancer in the same region of your RDS:
     - **Schema**: `Internal`
     - **Load balancer IP address type**: `IPv4`
     - **VPC**: the VPC where your RDS is located
-    - **Availability Zones**: it must overlap with your TiDB Cloud Essential cluster
+    - **Availability Zones**: it must overlap with your {{{ .essential }}} cluster
     - **Security groups**: create a new security group with the following rules:
         - An inbound rule that allows MySQL/Aurora: 
             Type: `MySQL/Aurora`
@@ -132,9 +132,9 @@ To create a private link connection using the TiDB Cloud CLI:
 
 1. Run the following command:
 
-```shell
-ticloud serverless private-link-connection create -c <cluster-id> --display-name <display-name> --type AWS_ENDPOINT_SERVICE --aws.endpoint-service-name <endpoint-service-name>
-```
+    ```shell
+    ticloud serverless private-link-connection create -c <cluster-id> --display-name <display-name> --type AWS_ENDPOINT_SERVICE --aws.endpoint-service-name <endpoint-service-name>
+    ```
 
 2. Go to the detail page of your endpoint service on the [AWS console](https://console.aws.amazon.com). In the **Endpoint Connections** tab, accept the endpoint connection request from TiDB Cloud.
 

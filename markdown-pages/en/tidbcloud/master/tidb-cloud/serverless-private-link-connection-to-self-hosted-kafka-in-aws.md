@@ -5,7 +5,7 @@ summary: Learn how to connect to an AWS Self-Hosted Kafka using an AWS Endpoint 
 
 # Connect to AWS Self-Hosted Kafka via Private Link Connection
 
-This document describes how to connect a {{{ .essential }}} cluster to a self-hosted Kafka cluster in AWS using AWS Endpoint Service [private link connection](/tidb-cloud/serverless-private-link-connection.md).
+This document describes how to connect a TiDB Cloud Essential cluster to a self-hosted Kafka cluster in AWS using AWS Endpoint Service [private link connection](/tidb-cloud/serverless-private-link-connection.md).
 
 The mechanism works as follows:
 
@@ -29,7 +29,7 @@ The mechanism works as follows:
     - Manage load balancer
     - Manage endpoint services
 
-- Ensure that your {{{ .essential }}} is active in AWS. Retrieve and save the following details for later use:
+- Ensure that your TiDB Cloud Essential is active in AWS. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZs)

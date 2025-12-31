@@ -5,7 +5,7 @@ summary: Learn how to connect to an Alibaba Cloud ApsaraDB RDS for MySQL instanc
 
 # Connect to Alibaba Cloud ApsaraDB RDS for MySQL via a Private Link Connection 
 
-This document describes how to connect a {{{ .essential }}} cluster to an [Alibaba Cloud ApsaraDB RDS for MySQL](https://www.alibabacloud.com/en/product/apsaradb-for-rds-mysql) instance using an Alibaba Cloud Endpoint Service private link connection.
+This document describes how to connect a TiDB Cloud Essential cluster to an [Alibaba Cloud ApsaraDB RDS for MySQL](https://www.alibabacloud.com/en/product/apsaradb-for-rds-mysql) instance using an Alibaba Cloud Endpoint Service private link connection.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This document describes how to connect a {{{ .essential }}} cluster to an [Aliba
     - Manage load balancer
     - Manage endpoint services
 
-- Your {{{ .essential }}} cluster is on Alibaba Cloud, and it is active. Retrieve and save the following details for later use:
+- Your TiDB Cloud Essential cluster is on Alibaba Cloud, and it is active. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)
@@ -33,8 +33,8 @@ Identify an Alibaba Cloud ApsaraDB RDS for MySQL that you want to use, or [set u
 
 Your ApsaraDB RDS for MySQL instance must meet the following requirements:
 
-- Region match: the instance must reside in the same Alibaba Cloud region as your {{{ .essential }}} cluster.
-- AZ (Availability Zone) availability: the availability zones must overlap with those of your {{{ .essential }}} cluster.
+- Region match: the instance must reside in the same Alibaba Cloud region as your TiDB Cloud Essential cluster.
+- AZ (Availability Zone) availability: the availability zones must overlap with those of your TiDB Cloud Essential cluster.
 - Network accessibility: the instance must be configured with proper IP whitelist and be accessible within the VPC.
 
 > **Note**
@@ -61,7 +61,7 @@ Set up the load balancer in the same region of your ApsaraDB RDS for MySQL as fo
 
     - **Network Type**: select `Internal-facing`
     - **VPC**: select the VPC where your ApsaraDB RDS for MySQL is located
-    - **Zone**: it must overlap with your {{{ .essential }}} cluster
+    - **Zone**: it must overlap with your TiDB Cloud Essential cluster
     - **IP Version**: select `IPv4`
 
     Find the load balancer you created, and then click **Create Listener**:

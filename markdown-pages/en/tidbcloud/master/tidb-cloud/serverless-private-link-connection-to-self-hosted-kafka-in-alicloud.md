@@ -35,7 +35,7 @@ For example, the port mapping is as follows:
     - Manage load balancer
     - Manage endpoint services
 
-- TiDB Cloud Essential information: confirm that your TiDB Cloud Essential is active in Alibaba Cloud provider. Retrieve and save the following details for later use:
+- {{{ .essential }}} information: confirm that your {{{ .essential }}} is active in Alibaba Cloud provider. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)

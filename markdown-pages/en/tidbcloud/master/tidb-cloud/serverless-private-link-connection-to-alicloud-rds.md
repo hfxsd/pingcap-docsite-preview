@@ -5,7 +5,7 @@ summary: Learn how to connect to an Alibaba Cloud ApsaraDB RDS for MySQL instanc
 
 # Connect to Alibaba Cloud ApsaraDB RDS for MySQL via a Private Link Connection 
 
-This document describes how to connect a TiDB Cloud Essential cluster to an [Alibaba Cloud ApsaraDB RDS for MySQL](https://www.alibabacloud.com/en/product/apsaradb-for-rds-mysql) instance using an Alibaba Cloud Endpoint Service private link connection.
+This document describes how to connect a {{{ .essential }}} cluster to an [Alibaba Cloud ApsaraDB RDS for MySQL](https://www.alibabacloud.com/en/product/apsaradb-for-rds-mysql) instance using an Alibaba Cloud Endpoint Service private link connection.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ This document describes how to connect a TiDB Cloud Essential cluster to an [Ali
     - Manage load balancer
     - Manage endpoint services
 
-- Your TiDB Cloud Essential cluster is on Alibaba Cloud, and it is active. Retrieve and save the following details for later use:
+- Your {{{ .essential }}} cluster is on Alibaba Cloud, and it is active. Retrieve and save the following details for later use:
 
     - Account ID
     - Availability Zones (AZ)
@@ -29,12 +29,12 @@ To view the the Alibaba Cloud account ID and availability zones, do the followin
 
 ## Step 1. Set up an ApsaraDB RDS for MySQL instance
 
-Identify an Alibaba Cloud ApsaraDB RDS for MySQL that you want to use, or [set up a new RDS](https://www.alibabacloud.com/help/en/rds/apsaradb-rds-for-mysql/step-1-create-an-apsaradb-rds-for-mysql-instance-and-configure-databases).
+Identify an Alibaba Cloud ApsaraDB RDS for MySQL that you want to use, or [create a new RDS](https://www.alibabacloud.com/help/en/rds/apsaradb-rds-for-mysql/step-1-create-an-apsaradb-rds-for-mysql-instance-and-configure-databases).
 
 Your ApsaraDB RDS for MySQL instance must meet the following requirements:
 
-- Region match: the instance must reside in the same Alibaba Cloud region as your TiDB Cloud Essential cluster.
-- AZ (Availability Zone) availability: the availability zones must overlap with those of your TiDB Cloud Essential cluster.
+- Region match: the instance must reside in the same Alibaba Cloud region as your {{{ .essential }}} cluster.
+- AZ (Availability Zone) availability: the availability zones must overlap with those of your {{{ .essential }}} cluster.
 - Network accessibility: the instance must be configured with proper IP whitelist and be accessible within the VPC.
 
 > **Note**
@@ -49,22 +49,24 @@ You need to set up the load balancer and the endpoint service in the Alibaba Clo
 
 Set up the load balancer in the same region of your ApsaraDB RDS for MySQL as follows:
 
-1. Go to [Server Groups](https://slb.console.alibabacloud.com/nlb/ap-southeast-1/server-groups) to create a server group.
+1. Go to [Server Groups](https://slb.console.alibabacloud.com/nlb/ap-southeast-1/server-groups) to create a server group. Provide the following information:
 
     - **Server Group Type**: select `IP`
     - **VPC**: enter the VPC where your ApsaraDB RDS for MySQL is located
     - **Backend Server Protocol**: select `TCP`
 
-    Click the created server group to add backend servers. Add the IP address of your ApsaraDB RDS for MySQL instance. You can ping the for MySQL RDS endpoint to get the IP address.
+2. Click the created server group to add backend servers, and then add the IP address of your ApsaraDB RDS for MySQL instance. 
+
+    You can ping the RDS endpoint to get the IP address.
  
-2. Go to [NLB](https://slb.console.alibabacloud.com/nlb) to create a network load balancer.
+3. Go to [NLB](https://slb.console.alibabacloud.com/nlb) to create a network load balancer. Provide the following information:
 
     - **Network Type**: select `Internal-facing`
     - **VPC**: select the VPC where your ApsaraDB RDS for MySQL is located
-    - **Zone**: it must overlap with your TiDB Cloud Essential cluster
+    - **Zone**: it must overlap with your {{{ .essential }}} cluster
     - **IP Version**: select `IPv4`
 
-    Find the load balancer you created, and then click **Create Listener**:
+4. Find the load balancer you created, and then click **Create Listener**. Provide the following information:
     
     - **Listener Protocol**: select `TCP`
     - **Listener Port**: enter the database port, for example, `3306` for MySQL
@@ -72,9 +74,9 @@ Set up the load balancer in the same region of your ApsaraDB RDS for MySQL as fo
   
 ### Step 2.2. Set up an endpoint service
 
-Set up the endpoint service in the same region of your ApsaraDB RDS for MySQL:
+To set up the endpoint service in the same region of your ApsaraDB RDS for MySQL, take the following steps:
 
-1. Go to [Endpoint service](https://vpc.console.alibabacloud.com/endpointservice) to create an endpoint service. 
+1. Go to [Endpoint service](https://vpc.console.alibabacloud.com/endpointservice) to create an endpoint service. Provide the following information:
 
     - **Service Resource Type**: select `NLB`
     - **Select Service Resource**: select all zones that NLB is in, and choose the NLB that you created in the previous step

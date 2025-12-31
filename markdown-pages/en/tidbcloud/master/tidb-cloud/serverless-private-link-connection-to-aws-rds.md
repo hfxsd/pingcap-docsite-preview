@@ -5,7 +5,7 @@ summary: Learn how to connect to an Amazon RDS instance using an AWS Endpoint Se
 
 # Connect to Amazon RDS via a Private Link Connection
 
-This document describes how to connect a {{{ .essential }}} cluster to an [Amazon RDS](https://aws.amazon.com/rds/) instance using an AWS Endpoint Service private link connection.
+This document describes how to connect a TiDB Cloud Essential cluster to an [Amazon RDS](https://aws.amazon.com/rds/) instance using an AWS Endpoint Service private link connection.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ This document describes how to connect a {{{ .essential }}} cluster to an [Amazo
     - Manage load balancer
     - Manage endpoint services
 
-- Your {{{ .essential }}} is hosted on AWS, and it is active. Retrieve and save the following details for later use:
+- Your TiDB Cloud Essential is hosted on AWS, and it is active. Retrieve and save the following details for later use:
 
     - AWS Account ID
     - Availability Zones (AZ)
@@ -34,8 +34,8 @@ Identify an Amazon RDS instance to use, or [create a new one](https://docs.aws.a
 
 The Amazon RDS instance must meet the following requirements:
 
-- Region match: the instance must reside in the same AWS region as your {{{ .essential }}} cluster.
-- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your {{{ .essential }}} cluster.
+- Region match: the instance must reside in the same AWS region as your TiDB Cloud Essential cluster.
+- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your TiDB Cloud Essential cluster.
 - Set your Amazon RDS instance with a proper security group, and it is accessible within the VPC. For example, you can create a security group with the following rules:
 
     - An inbound rule that allows MySQL/Aurora: 
@@ -73,7 +73,7 @@ To set up the load balancer in the same region of your RDS, take the following s
     - **Schema**: select `Internal`
     - **Load balancer IP address type**: select `IPv4`
     - **VPC**: the VPC where your RDS is located
-    - **Availability Zones**: it must overlap with your {{{ .essential }}} cluster
+    - **Availability Zones**: it must overlap with your TiDB Cloud Essential cluster
     - **Security groups**: create a new security group with the following rules:
         - An inbound rule that allows MySQL/Aurora: 
             - Type: `MySQL/Aurora`

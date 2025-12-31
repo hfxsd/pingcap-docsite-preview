@@ -5,7 +5,7 @@ summary: Learn how to connect to an Amazon RDS instance using an AWS Endpoint Se
 
 # Connect to Amazon RDS via a Private Link Connection
 
-This document describes how to connect a TiDB Cloud Essential cluster to an [Amazon RDS](https://aws.amazon.com/rds/) instance using an AWS Endpoint Service private link connection.
+This document describes how to connect a {{{ .essential }}} cluster to an [Amazon RDS](https://aws.amazon.com/rds/) instance using an AWS Endpoint Service private link connection.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ This document describes how to connect a TiDB Cloud Essential cluster to an [Ama
     - Manage load balancer
     - Manage endpoint services
 
-- Your TiDB Cloud Essential is hosted on AWS, and it is active. Retrieve and save the following details for later use:
+- Your {{{ .essential }}} is hosted on AWS, and it is active. Retrieve and save the following details for later use:
 
     - AWS Account ID
     - Availability Zones (AZ)
@@ -34,8 +34,8 @@ Identify an Amazon RDS instance to use, or [create a new one](https://docs.aws.a
 
 The Amazon RDS instance must meet the following requirements:
 
-- Region match: the instance must reside in the same AWS region as your TiDB Cloud Essential cluster.
-- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your TiDB Cloud Essential cluster.
+- Region match: the instance must reside in the same AWS region as your {{{ .essential }}} cluster.
+- The [subnet group](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets) of your Amazon RDS instance must have overlapping availability zones as your {{{ .essential }}} cluster.
 - Set your Amazon RDS instance with a proper security group, and it is accessible within the VPC. For example, you can create a security group with the following rules:
 
     - An inbound rule that allows MySQL/Aurora: 
@@ -51,6 +51,8 @@ The Amazon RDS instance must meet the following requirements:
 > To connect to a cross-region RDS instance, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
 
 ## Step 2. Expose the Amazon RDS instance as an endpoint service
+
+You need to set up the load balancer and the AWS Endpoint Service in the AWS console.
 
 ### Step 2.1. Set up the load balancer
 
@@ -71,7 +73,7 @@ Set up the load balancer in the same region of your RDS:
     - **Schema**: select `Internal`
     - **Load balancer IP address type**: select `IPv4`
     - **VPC**: the VPC where your RDS is located
-    - **Availability Zones**: it must overlap with your TiDB Cloud Essential cluster
+    - **Availability Zones**: it must overlap with your {{{ .essential }}} cluster
     - **Security groups**: create a new security group with the following rules:
         - An inbound rule that allows MySQL/Aurora: 
             Type: `MySQL/Aurora`
@@ -93,17 +95,17 @@ Set up the endpoint service in the same region of your RDS:
 
 1. Go to [Endpoint service](https://console.aws.amazon.com/vpcconsole/home#EndpointServices) to create an endpoint service. 
 
-    - **Load balancer type**: `Network`
-    - **Load balancers**: the load balancer you created in the previous step.
-    - **Supported Regions**: leave it empty if you don't have cross-region requirements.
+    - **Load balancer type**: select `Network`
+    - **Load balancers**: enter the load balancer you create in the previous step
+    - **Supported Regions**: leave it empty if you do not have cross-region requirements.
     - **Require acceptance for endpoint**: it is recommended to select `Acceptance required`
-    - **Supported IP address types**: `Ipv4`
+    - **Supported IP address types**: select `Ipv4`
 
-2. Go to the details page of the endpoint service, and then copy the endpoint service name, in the format of `com.amazonaws.vpce.<region>.vpce-svc-xxx`. You need to provide it to TiDB Cloud.
+2. Go to the details page of the endpoint service, and then copy the endpoint service name, in the format of `com.amazonaws.vpce.<region>.vpce-svc-xxxxxxxxxxxxxxxxx`. You need to provide it to TiDB Cloud.
 
-3. On the details page of the endpoint service, click the **Allow principals** tab, and then add the TiDB Cloud account ID to the allowlist, for example, `arn:aws:iam::<account_id>:root`. You can get the account ID in [Prerequisites](#prerequisites).
+3. On the details page of the endpoint service, click the **Allowed principals** tab, and then add the TiDB Cloud account ID to the allowlist, for example, `arn:aws:iam::<account_id>:root`. You can get the account ID in [Prerequisites](#prerequisites).
 
-## Step 3. Create a private link connection in TiDB Cloud
+## Step 3. Create an AWS Endpoint Service private link connection in TiDB Cloud
 
 You can create a private link connection using the TiDB Cloud console or the TiDB Cloud CLI.
 

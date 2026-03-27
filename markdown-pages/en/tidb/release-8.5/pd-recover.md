@@ -77,6 +77,8 @@ The cluster ID can be obtained from the log of PD, TiKV, or TiDB. To get the clu
 
 To get the cluster ID from the PD log, run the following command:
 
+{{< copyable "shell-regular" >}}
+
 ```bash
 grep "init cluster id" {{/path/to}}/pd.log
 ```
@@ -90,6 +92,8 @@ grep "init cluster id" {{/path/to}}/pd.log
 
 To get the cluster ID from the TiDB log, run the following command:
 
+{{< copyable "shell-regular" >}}
+
 ```bash
 grep "init cluster id" {{/path/to}}/tidb.log
 ```
@@ -102,6 +106,8 @@ grep "init cluster id" {{/path/to}}/tidb.log
 #### Get cluster ID from TiKV log
 
 To get the cluster ID from the TiKV log, run the following command:
+
+{{< copyable "shell-regular" >}}
 
 ```bash
 grep "connect to PD cluster" {{/path/to}}/tikv.log
@@ -124,6 +130,8 @@ To get allocated ID from the monitor, you need to make sure that the metrics you
 
 To get the allocated ID from the PD log, you need to make sure that the log you are viewing is the log of **the last PD leader**, and you can get the maximum allocated ID by running the following command:
 
+{{< copyable "shell-regular" >}}
+
 ```bash
 grep "idAllocator allocates a new id" {{/path/to}}/pd*.log |  awk -F'=' '{print $2}' | awk -F']' '{print $1}' | sort -r -n | head -n 1
 ```
@@ -142,6 +150,8 @@ Before deploying a new PD cluster, you need to stop the existing PD cluster and 
 ### Step 4: Use pd-recover
 
 You only need to run `pd-recover` on one PD node. Note that to avoid reallocation, it is recommended to set the `-alloc-id` parameter to a value larger than the allocated ID. For example, if the maximum allocated ID obtained from monitoring or logs is `9000`, it is recommended to pass `10000` or a larger value to the `-alloc-id` parameter.
+
+{{< copyable "shell-regular" >}}
 
 ```bash
 ./pd-recover -endpoints http://10.0.1.13:2379 -cluster-id 6747551640615446306 -alloc-id 10000

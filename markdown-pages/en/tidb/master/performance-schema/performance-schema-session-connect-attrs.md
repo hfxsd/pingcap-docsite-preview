@@ -20,8 +20,6 @@ Common attributes:
 
 You can view the columns of the `SESSION_CONNECT_ATTRS` table as follows:
 
-{{< copyable "sql" >}}
-
 ```sql
 USE performance_schema;
 DESCRIBE session_connect_attrs;
@@ -39,8 +37,6 @@ DESCRIBE session_connect_attrs;
 ```
 
 You can view the information on session attributes stored in the `SESSION_CONNECT_ATTRS` table as follows:
-
-{{< copyable "sql" >}}
 
 ```sql
 USE performance_schema;

@@ -20,6 +20,8 @@ Common attributes:
 
 You can view the columns of the `SESSION_CONNECT_ATTRS` table as follows:
 
+{{< copyable "sql" >}}
+
 ```sql
 USE performance_schema;
 DESCRIBE session_connect_attrs;
@@ -37,6 +39,8 @@ DESCRIBE session_connect_attrs;
 ```
 
 You can view the information on session attributes stored in the `SESSION_CONNECT_ATTRS` table as follows:
+
+{{< copyable "sql" >}}
 
 ```sql
 USE performance_schema;
@@ -70,6 +74,7 @@ TiDB uses the [`performance_schema_session_connect_attrs_size`](/system-variable
 - Default value: `4096` bytes
 - Range: `[-1, 65536]`
 - `-1` means no configured limit, and TiDB treats it as up to `65536` bytes.
+- `0`, means that TiDB does not retain client-provided session connection attributes, which effectively disables recording session attributes.
 
 When the total size exceeds this limit, TiDB truncates excess attributes and adds `_truncated` to indicate the number of truncated bytes.
 

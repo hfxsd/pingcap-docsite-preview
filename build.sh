@@ -67,12 +67,12 @@ cp docs.json website-docs/docs/docs.json
 # Run the start command for development environment. <https://www.gatsbyjs.com/docs/reference/gatsby-cli/#develop>
 if [ "$CMD" == "start" ]; then
   mkdir -p website-docs/.cache
-  (cd website-docs && pnpm install --no-frozen-lockfile && pnpm start)
+  (cd website-docs && pnpm install --frozen-lockfile && pnpm start)
 fi
 
 # Run the build command for production environment. <https://www.gatsbyjs.com/docs/reference/gatsby-cli/#build>
 if [ "$CMD" == "build" ]; then
   replace_image_path
-  (cd website-docs && pnpm install --no-frozen-lockfile && pnpm build)
+  (cd website-docs && pnpm install --frozen-lockfile && pnpm build)
   move_images
 fi
